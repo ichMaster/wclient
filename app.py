@@ -102,7 +102,7 @@ class APIClient(App):
         with TabbedContent(id="res-tabs"):
             with TabPane("Body", id="tab-res-body"):
                 yield TextArea(
-                    id="res-body", read_only=True, language="json", soft_wrap=False
+                    id="res-body", read_only=True, soft_wrap=False
                 )
             with TabPane("Headers", id="tab-res-headers"):
                 yield DataTable(id="res-headers")
@@ -145,7 +145,7 @@ class APIClient(App):
         status.update(f"[yellow]→ {method} {url}")
 
         try:
-            async with httpx.AsyncClient(timeout=30) as client:
+            async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
                 t0 = time.monotonic()
 
                 content = (
@@ -159,11 +159,14 @@ class APIClient(App):
                 )
                 elapsed = time.monotonic() - t0
 
-                body_text = resp.text
-                if "json" in resp.headers.get("content-type", ""):
+                body_text = resp.text.strip()
+                content_type = resp.headers.get("content-type", "")
+                if "json" in content_type:
                     body_text = prettify_json(body_text)
 
-                self.query_one("#res-body", TextArea).text = body_text
+                res_body = self.query_one("#res-body", TextArea)
+                res_body.language = "json" if "json" in content_type else None
+                res_body.text = body_text
 
                 ht = self.query_one("#res-headers", DataTable)
                 ht.clear()

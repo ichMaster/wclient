@@ -47,5 +47,5 @@ Screen {
 }
 
 #res-body, #res-headers {
-    height: 100%;
+    height: 1fr;
 }
