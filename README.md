@@ -2,6 +2,8 @@
 
 A terminal HTTP API client with a Textual TUI — compose requests, set headers and body, send any HTTP method, and view formatted responses.
 
+![wclient screenshot](docs/screenshot.png)
+
 ## Install
 
 ```sh
